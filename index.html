@@ -1373,34 +1373,38 @@
 
 
     //form functionality
-
-    document.getElementById('homeworkForm').addEventListener('submit', function(e) {
+document.getElementById('homeworkForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const homeworkText = document.getElementById('homeworkText').value;
-    const studentEmail = document.getElementById('studentEmail').value;
+    const form = e.target;
+    const formData = new FormData(form);
 
-    fetch('https://formspree.io/f/{your-form-id}', { // Replace {your-form-id} below
+    fetch(form.action, {
         method: 'POST',
+        body: formData,
         headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            homework: homeworkText,
-            email: studentEmail,
-            _subject: 'New Homework Submission'
-        })
+            'Accept': 'application/json'
+        }
     })
     .then(response => {
         if (response.ok) {
-            document.getElementById('submissionMessage').innerHTML = '<span style="color:green">Your homework has been submitted successfully!</span>';
-            document.getElementById('homeworkForm').reset();
+            const submissionMessage = document.createElement('div');
+            submissionMessage.className = 'submission-message';
+            submissionMessage.innerHTML = '<span style="color:green">Your homework has been submitted successfully!</span>';
+            form.appendChild(submissionMessage);
+            form.reset();
         } else {
-            document.getElementById('submissionMessage').innerHTML = '<span style="color:red">Error submitting homework. Please try again.</span>';
+            const submissionMessage = document.createElement('div');
+            submissionMessage.className = 'submission-message';
+            submissionMessage.innerHTML = '<span style="color:red">Error submitting homework. Please try again.</span>';
+            form.appendChild(submissionMessage);
         }
     })
-    .catch(() => {
-        document.getElementById('submissionMessage').innerHTML = '<span style="color:red">Error submitting homework. Please check your internet connection.</span>';
+    .catch((error) => {
+        const submissionMessage = document.createElement('div');
+        submissionMessage.className = 'submission-message';
+        submissionMessage.innerHTML = '<span style="color:red">Error submitting homework. Please check your internet connection.</span>';
+        form.appendChild(submissionMessage);
     });
 });
 
